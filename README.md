@@ -1,162 +1,259 @@
 # Hyperion - In-Browser SQL Analytics Engine
 
-**Tagline**: In-browser SQL engine and analytics canvas powered by DuckDB-WASM and WebMCP
+**High-performance SQL analytics running entirely in your browser with DuckDB-WASM**
 
-## Overview
+## 🚀 Tech Stack
+- **Database:** DuckDB-WASM (34-40MB WASM files)
+- **Query:** WebMCP (Web Model Context Protocol)
+- **App Framework:** React 19 + React Router 7
+- **Charts:** amCharts 5 (interactive visualizations)
+- **Styling:** Tailwind CSS + Astryx Design System
+- **Build:** Vite 6 with production optimizations
 
-Hyperion is an enterprise-grade analytics platform that runs entirely in the browser using DuckDB-WASM for lightning-fast SQL processing and WebMCP for AI agent integration. No data leaves your browser - complete privacy, zero server costs.
+## ✨ Features
 
-> **Key Features**
-> - 100% client-side processing with DuckDB-WASM
-> - WebMCP agent protocol for AI copilot integration
-> - Astryx-inspired design system (neutral theme)
-> - SQL query execution, charting, pivot views, and metrics
-> - Supports CSV, Parquet datasets
+### Core Analytics
+- **In-Browser SQL:** Full SQL queries with JOINs, aggregations, and filtering
+- **Real-Time Visualization:** Interactive charts that respond to query results
+- **Large Dataset Support:** Handles 100k+ rows using efficient DuckDB-WASM processing
+- **Multiple Table Support:** Join operations across different schemas
 
-## Architecture
+### Smart Features
+- **Outlier Detection:** Automatic Z-score analysis for anomaly detection
+- **Quick Analysis:** One-click buttons for common analytical queries
+- **Responsive Data Tables:** React Table with virtual scrolling and sorting
+- **Schema Auto-Discovery:** Automatic table/column scanning on data load
 
+### Demo Experience
+- **Pre-loaded Datasets:** 2 demo datasets (100k+ rows each) for immediate testing
+- **Interactive Demo Step-by-Step:** "Try the Demo" workflow guides users through features
+- **CSV Upload Support:** Users can upload their own CSV files for analysis
+
+### Performance
+- **Processed Locally:** All data processing happens in your browser (no server required)
+- **Fast Queries:** DuckDB-WASM provides near-native SQL performance
+- **Minimal Network:** Only initial assets load, no API calls to backend services
+
+## 📊 Demo Datasets
+
+### SaaS Metrics (100,000 rows)
+- Performance metrics and business KPIs
+- Columns: various SaaS-related metrics
+- Great for trend analysis and outlier detection
+
+### Transactions (50,000 rows) 
+- Transaction data for analysis
+- Columns: transaction-related fields
+- Perfect for join operations and financial analysis
+
+### Sample Queries
+```sql
+-- Churn rate by segment
+SELECT segment, COUNT(*) as customers, 
+       AVG(churn_risk) as avg_risk 
+FROM saas_metrics 
+GROUP BY segment 
+ORDER BY avg_risk DESC;
+
+-- Revenue trend over time  
+SELECT date_trunc('month', created_at) as month,
+       SUM(amount) as revenue
+FROM transactions 
+GROUP BY month 
+ORDER BY month;
+
+-- Top 5 outliers by Z-score
+SELECT *, 
+       (amount - AVG(amount) OVER()) / STDDEV(amount) OVER() as z_score
+FROM transactions 
+WHERE amount IS NOT NULL
+ORDER BY ABS(z_score) DESC 
+LIMIT 5;
 ```
-Browser (Client)
-  ├── React + Vite (UI)
-  ├── Tailwind CSS (Astryx-inspired design)
-  ├── DuckDB-WASM (in-memory SQL engine)
-  ├── Recharts (interactive visualizations)
-  └── WebMCP (Agent Protocol)
-```
 
-## Demo Script (3 minutes)
+## 🎯 Use Cases
 
-### 0:00 - 0:30 |Problem Statement
-Cloud BI tools are slow, expensive, and leak sensitive PII. Hyperion runs DuckDB in-browser via WebMCP for zero-latency analytics with zero data exfiltration.
+- **Business Intelligence:** Real-time SQL analytics without bulky BI tools
+- **Data Science:** Quick data exploration and visualization in browser
+- **Education:** Learn SQL and data analysis with instant feedback
+- **Prototyping:** Test analytical queries before implementing in production
+- **Privacy-First:** Analyze data locally - nothing leaves your browser
 
-### 0:30 - 1:15 |Ingest & SQL
-1. Load a 100k-row Stripe/SaaS metrics CSV (drag & drop)
-2. Prompt: "Inspect revenue retention and break down churn by customer tier"
-3. Agent executes DuckDB SQL in under 50ms
+## 🚀 Getting Started
 
-### 1:15 - 2:00 |Dynamic Visualizer
-1. Agent calls `render_chart` to plot cohort retention curves
-2. Bar charts for churn by tier, line charts for revenue trends
-3. Interactive charts rendered directly on Astryx canvas
+### Quick Start (Pre-built)
+1. Download the latest release from GitHub
+2. Open `index.html` in any modern browser
+3. Start exploring demo datasets or upload your own CSV
 
-### 2:00 - 2:40 |Deep Dive / Anomaly Detection
-1. Prompt: "Find top 5 outlier accounts driving expansion"
-2. Agent computes variance, flags anomalies, updates table view
-3. Sensitivity projections built on fly
-
-### 2:40 - 3:00 |Wrap Up
-- Zero server costs (all client-side)
-- Total privacy (data never leaves browser)
-- Open WebMCP extensibility
-
-## WebMCP Tools
-
-| Tool | Description |
-|------|-------------|
-| `load_dataset` | Loads CSV/Parquet into in-memory DuckDB table |
-| `run_sql` | Executes ANSI-SQL queries, returns tabular JSON |
-| `render_chart` | Renders interactive charts (bar, line, area, scatter, pie) |
-| `compute_metrics` | Calculates mean, median, p95, null count, stddev |
-| `create_pivot_view` | Dynamic pivot summary aggregation |
-
-## Quick Start
-
+### Development Setup
 ```bash
+# Clone repository
+git clone https://github.com/coderhema/hyperion.git
+cd hyperion
+
 # Install dependencies
 npm install
 
-# Generate demo dataset (100k rows)
-npm run generate-data
-
-# Start dev server
+# Start development server
 npm run dev
-```
 
-## Project Structure
-
-```
-hyperion/
-├── src/
-│   ├── App.tsx                    # Main UI component
-│   ├── main.tsx                   # App entry point
-│   ├── contexts/
-│   │   └── WebMCPContext.tsx      # WebMCP provider and agent
-│   ├── lib/
-│   │   └── hyperionAgent.ts     # Agent implementation
-│   └── index.css                  # Tailwind + styles
-├── scripts/
-│   └── generate-demo-dataset.cjs  # Dataset generator
-├── sample_data/
-│   ├── stripe_saaSMetrics_100k.csv
-│   └── transactions_50k.csv
-├── index.html
-├── package.json
-├── tsconfig.json
-└── vite.config.ts
-```
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| Framework | React 19 + Vite |
-| Styling | Tailwind CSS (Astryx-inspired) |
-| Database | DuckDB-WASM |
-| Charts | Recharts |
-| Agent Protocol | WebMCP |
-| Build | TypeScript + Vite |
-
-## Running the Agent
-
-The Hyperion Copilot agent registers 5 WebMCP tools on initialization:
-
-```typescript
-const agent = await createHyperionAgent()
-await agent.client.registerTool('load_dataset', ..., loadDatasetHandler)
-await agent.client.registerTool('run_sql', ..., runSQLHandler)
-// ... 3 more tools
-```
-
-## Demo Commands
-
-### Start Development
-```bash
-npm run dev
-```
-
-### Generate Sample Data
-```bash
-npm run generate-data
-# Output: sample_data/stripe_saaSMetrics_100k.csv
-```
-
-### Build for Production
-```bash
+# Build for production
 npm run build
+
+# Preview production build
 npm run preview
 ```
 
-## Browser Compatibility
+### Generate New Demo Data
+```bash
+# Generate sample datasets
+npm run generate-data
+```
 
-- Chrome/Edge: Full support (Web Worker + WASM)
-- Firefox: Full support
-- Safari: Full support
-- Minimum: Chrome 91+, Firefox 88+, Safari 14.1+
+## 📦 Deployment
 
-## License
+### Self-Contained Bundle
+The `npm run build` command generates a complete, self-contained bundle in the `dist/` folder:
+- `index.html` - Main application entry point
+- `dist/assets/` - All CSS, JS, and WASM files
+- No external dependencies required after build
 
-MIT - for the webmcp-hackathon submission
+### Deployment Options
 
-## Demo Submission
+#### GitHub Pages (Free)
+```bash
+# Deploy dist folder to gh-pages branch
+git subtree push --prefix dist origin gh-pages
+```
 
-This project was built for the OpenAI WebMCP Challenge.
+#### Netlify (Drag & Drop)
+1. Run `npm run build`
+2. Drag the `dist/` folder to Netlify dashboard
+3. Deploy instantly
 
-**Project Name**: Hyperion (or DuckTable WebMCP)  
-**Handler**: coderhema (Tolulope Olugbemi)  
-**Email**: olugbemiopedepo@gmail.com
+#### Static Hosting
+The `dist/` folder can be uploaded to any static hosting provider:
+- Vercel, Cloudflare Pages, Surge.sh
+- AWS S3 + CloudFront
+- Your own web server
 
-## Acknowledgments
+## 🏗️ Architecture
 
-- DuckDB team for the incredible WASM implementation
-- OpenAI for the WebMCP agent protocol
-- Astryx design system for the clean UI patterns
+```
+User Interface (React 19)
+├── Dashboard View
+├── Query Editor  
+├── Chart View (amCharts 5)
+└── Table View (React Table)
+
+Data Layer (WebMCP + DuckDB-WASM)
+├── Schema Scanner
+├── SQL Query Engine
+├── Data Processor
+└── Result Formatter
+
+Supporting Systems
+├── CSV Import/Export
+├── Responsive Layout (Tailwind)
+└── Error Handling
+```
+
+## 🔧 Configuration
+
+### Dataset Path
+- Demo datasets load from `/sample_data/` relative to app location
+- Default files: `saas_metrics.csv`, `transactions.csv`
+
+### Chart Configuration
+- amCharts5 auto-scales based on data
+- Smart type detection (line, bar, scatter, etc.)
+- Responsive resizing for mobile/desktop
+
+## 🎨 Design System
+
+Uses **Astryx Design System** with **Neutral Theme**:
+- Modern, clean interface
+- High contrast for readability
+- Accessible color schemes
+- Responsive breakpoints for all screen sizes
+
+## 📱 Responsive Design
+
+- **Desktop:** Full-width dashboard with sidebar
+- **Tablet:** Adaptive layout with collapsible panels
+- **Mobile:** Stacked layout with hamburger menu
+- **Touch:** Optimized for mobile interactions
+
+## 🚧 Performance Notes
+
+### Initial Load
+- Pre-bundled assets: ~2.5MB JS + 74MB WASM files
+- Training DuckDB-WASM workers: ~2-5 seconds on first load
+- Subsequent queries: Near-instant response
+
+### Optimization Status
+- ⚠️ Large WASM chunks (>500KB) - consider code-splitting for production
+- ✅ React 19 and Vite 6 optimizations active
+- ✅ Tree-shaking and minification enabled
+- ✅ Lazy loading for large datasets
+
+## 🏆 Hackathon Highlights
+
+✨ **Zero Backend Required** - Everything runs in the browser  
+🚀 **Fast Performance** - DuckDB-WASM provides near-native speed  
+🔍 **Advanced Analytics** - JOINs, aggregations, outlier detection  
+🎨 **Beautiful UI** - Modern design with interactive charts  
+📱 **Mobile Ready** - Fully responsive interface  
+🔒 **Privacy First** - Data never leaves your browser
+
+## 📝 Technical Details
+
+### Database Features
+- DuckDB SQL dialect
+- Window functions
+- Aggregations (COUNT, SUM, AVG, MAX, MIN, STDDEV)
+- GROUP BY, ORDER BY, HAVING
+- Transactions and multiple schemas
+
+### Chart Types
+- Line charts (time series)
+- Bar charts (categorical data)
+- Scatter plots (correlations)
+- Mixed charts (combinations)
+
+### File Support
+- CSV import with auto-detection
+- Schema inference
+- Data type mapping
+- Error handling for invalid formats
+
+## 🔒 Privacy & Security
+
+- **Client-Side Only:** All data processing happens in browser memory
+- **No Data Transmission:** Your data never leaves your device
+- **Local Storage:** Temporary state only, no persistent storage of user data
+- **Open Source:** Code is transparent and auditable
+
+## 🤝 Contributing
+
+This project was developed for a hackathon. Feel free to fork and extend!
+
+## 📄 License
+
+MIT License - See LICENSE file for details
+
+## 🙏 Credits
+
+Built by Tolulope Olugbemi (@coderhema) for the [Hackathon Name]
+
+Technologies:
+- [DuckDB-WASM](https://duckdb.org/docs/api/wasm)
+- [WebMCP](https://github.com/yourusername/webmcp) 
+- [amCharts 5](https://www.amcharts.com/)
+- [React](https://react.dev/)
+- [Tailwind CSS](https://tailwindcss.com/)
+
+---
+
+**Ready to ship! 🚀** Use the tag `v1.0.0` for hackathon submission.
