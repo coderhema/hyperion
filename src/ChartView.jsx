@@ -52,6 +52,9 @@ function ChartView({ spec }) {
         }),
       )
 
+      // Series-level data (chart-level data is not reliably propagated to axes/series in this am5 build)
+      const chartData = data.map((d) => ({ category: String(d[xKey]), ...d }))
+
       // Category X (bar / line / area)
       const xAxis = chart.xAxes.push(
         am5xy.CategoryAxis.new(root, {
@@ -59,6 +62,7 @@ function ChartView({ spec }) {
           renderer: am5xy.AxisRendererX.new(root, { minGridDistance: 28 }),
         }),
       )
+      xAxis.data.setAll(chartData)
       xAxis.get('renderer').labels.template.setAll({ fontSize: 11, fill: TEXT_MUTED })
       xAxis.get('renderer').grid.template.setAll({ stroke: GRID_COLOR, visible: true })
 
@@ -81,7 +85,7 @@ function ChartView({ spec }) {
         const common = { xAxis, yAxis, name, categoryXField: 'category', valueYField: field, tooltip: makeTooltip() }
         if (kind === 'column') {
           series = am5xy.ColumnSeries.new(root, { ...common, stacked: false })
-          series.get('columns').template.setAll({
+          series.columns.template.setAll({
             fill: color,
             stroke: color,
             strokeWidth: 0,
@@ -90,14 +94,20 @@ function ChartView({ spec }) {
             width: am5.percent(58),
             fillOpacity: 0.95,
           })
-          series.get('columns').template.states.create('hover', { fillOpacity: 1 })
+          series.columns.template.states.create('hover', { fillOpacity: 1 })
         } else {
           series = am5xy.LineSeries.new(root, { ...common, stroke: color, strokeWidth: 2, tension: 0.55 })
           if (kind === 'area') {
             series.fills.template.setAll({ fill: color, fillOpacity: 0.14, visible: true })
           }
         }
+        // Push the series BEFORE setting data - in amCharts 5.20.5 (canvas renderer)
+        // data set before the series joins chart.series never reaches the axes, leaving
+        // category/value axes empty and the plot area blank.
         chart.series.push(series)
+        // Coerce the y field to a real number - DuckDB-wasm can return non-JS-number
+        // scalars (BigInt, decimal strings) that amCharts silently refuses to plot.
+        series.data.setAll(chartData.map((d) => ({ ...d, [field]: num(d[field]) })))
         return series
       }
 
@@ -115,7 +125,6 @@ function ChartView({ spec }) {
         chart.children.push(legend)
       }
 
-      chart.set('data', data.map((d) => ({ category: String(d[xKey]), ...d })))
       return chart
     }
 
@@ -152,7 +161,9 @@ function ChartView({ spec }) {
           sprite: am5.Circle.new(root, { radius: 4, fill: am5.color(PALETTE[0]), fillOpacity: 0.75, stroke: am5.color('#ffffff'), strokeWidth: 1 }),
         }),
       )
-      chart.set('data', data.map((d) => ({ [fieldX]: num(d[fieldX]), [fieldY]: num(d[fieldY]) })))
+      series.data.setAll(
+        data.map((d) => ({ [fieldX]: num(d[fieldX]), [fieldY]: num(d[fieldY]) })),
+      )
       return chart
     }
 

@@ -240,7 +240,7 @@ function App() {
       if (schemas[table]) return schemas[table]
       try {
         const cols = await runSQL(
-          "SELECT column_name AS name, column_type AS type FROM duckdb_columns() WHERE table_name = '" +
+          "SELECT column_name AS name, data_type AS type FROM duckdb_columns() WHERE table_name = '" +
             table.replace(/'/g, "''") +
             "' ORDER BY column_index",
         )
@@ -453,9 +453,13 @@ function App() {
     setBusy('Finding outliers...')
     try {
       const sqlText =
-        'SELECT ' + (dim ? q(dim) + ' AS entity, ' : '') + q(measure) + ' AS value\n' +
-        'FROM ' + q(selectedTable) + '\n' +
-        'ORDER BY ' + q(measure) + ' DESC\n' +
+        'SELECT ' +
+        (dim ? q(dim) + ' AS entity, ROUND(SUM(' + q(measure) + '), 2) AS value' : q(measure) + ' AS value') +
+        '\nFROM ' +
+        q(selectedTable) +
+        '\n' +
+        (dim ? 'GROUP BY ' + q(dim) + '\n' : '') +
+        'ORDER BY value DESC\n' +
         'LIMIT 5'
       const rows = await runSQL(sqlText)
       showRows(rows)
