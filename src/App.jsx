@@ -630,7 +630,8 @@ function App() {
                     <button
                       key={table}
                       onClick={() => selectTable(table)}
-                      className={`w-full text-left px-3 py-2 rounded-sm text-xs font-mono transition-colors ${
+                      title={table}
+                      className={`w-full text-left px-3 py-2 rounded-sm text-xs font-mono transition-colors truncate ${
                         selectedTable === table ? 'bg-primary text-primary-foreground shadow-xs' : 'hover:bg-accent text-muted-foreground hover:text-foreground'
                       }`}
                     >
@@ -641,10 +642,10 @@ function App() {
               )}
               <div className="mt-4 pt-3 border-t border-border space-y-2">
                 <p className="text-[10px] uppercase tracking-wider text-muted-foreground/80">Demo datasets</p>
-                <Button variant="outline" className="w-full justify-start text-xs" onClick={() => handleLoadDemo('Loading SaaS 100k...', '/datasets/stripe_saaSMetrics_100k.csv', 'saas_100k')} disabled={!agentEnabled || busyFlag}>
+                <Button variant="outline" className="w-full justify-start text-xs truncate" title="SaaS metrics (100k rows)" onClick={() => handleLoadDemo('Loading SaaS 100k...', '/datasets/stripe_saaSMetrics_100k.csv', 'saas_100k')} disabled={!agentEnabled || busyFlag}>
                   SaaS metrics (100k rows)
                 </Button>
-                <Button variant="outline" className="w-full justify-start text-xs" onClick={() => handleLoadDemo('Loading Txns 50k...', '/datasets/transactions_50k.csv', 'transactions_50k')} disabled={!agentEnabled || busyFlag}>
+                <Button variant="outline" className="w-full justify-start text-xs truncate" title="Transactions (50k rows)" onClick={() => handleLoadDemo('Loading Txns 50k...', '/datasets/transactions_50k.csv', 'transactions_50k')} disabled={!agentEnabled || busyFlag}>
                   Transactions (50k rows)
                 </Button>
               </div>
@@ -653,13 +654,13 @@ function App() {
             <Card className="p-4">
               <SectionTitle icon="bolt">Quick Analysis</SectionTitle>
               <div className="space-y-2">
-                <Button variant="outline" className="w-full justify-start text-xs" onClick={handleAnalyzeChurn} disabled={!selectedTable || !hasBool || busyFlag} title={hasBool ? 'Churn rate by tier/segment' : 'Needs a boolean flag column (e.g. churn_flag)'}>
+                <Button variant="outline" className="w-full justify-start text-xs truncate" onClick={handleAnalyzeChurn} disabled={!selectedTable || !hasBool || busyFlag} title={hasBool ? 'Churn rate by tier/segment' : 'Needs a boolean flag column (e.g. churn_flag)'}>
                   Churn rate by segment
                 </Button>
-                <Button variant="outline" className="w-full justify-start text-xs" onClick={handleRevenueTrends} disabled={!selectedTable || !hasDate || busyFlag} title="Needs a date column">
+                <Button variant="outline" className="w-full justify-start text-xs truncate" onClick={handleRevenueTrends} disabled={!selectedTable || !hasDate || busyFlag} title="Needs a date column">
                   Revenue trend over time
                 </Button>
-                <Button variant="outline" className="w-full justify-start text-xs" onClick={handleTopOutliers} disabled={!selectedTable || !hasNum || busyFlag} title="Top 5 by largest measure">
+                <Button variant="outline" className="w-full justify-start text-xs truncate" onClick={handleTopOutliers} disabled={!selectedTable || !hasNum || busyFlag} title="Top 5 by largest measure">
                   Top 5 outliers
                 </Button>
               </div>
