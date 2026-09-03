@@ -1,4 +1,6 @@
 # Hyperion - In-Browser SQL Analytics Engine
+<img width="124" height="124" alt="IMG_20260901_215031_412" src="https://github.com/user-attachments/assets/89b499f9-32b5-4412-a86b-6daa685305ba" />
+
 
 **High-performance SQL analytics running entirely in your browser with DuckDB-WASM**
 
