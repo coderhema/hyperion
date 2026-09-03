@@ -1,0 +1,67 @@
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rliga" 0, "calt" 0;
+  }
+  .font-sans {
+    font-family: 'Figtree', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  }
+  ::selection {
+    background: rgb(0 116 226 / 0.14);
+  }
+}
+
+/* Utility Classes */
+.dense-table :where(th, td) {
+  @apply p-2 text-sm;
+}
+.dense-table th {
+  @apply text-muted-foreground font-medium text-xs uppercase tracking-wider;
+}
+.dense-table td {
+  @apply text-foreground;
+}
+
+.border-lead {
+  @apply border-border;
+}
+
+.rounded-sm {
+  border-radius: 4px;
+}
+
+.shadow-xs {
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+}
+
+.shadow-sm {
+  box-shadow: 0 1px 2px 0 rgb(16 24 40 / 0.05);
+}
+
+/* Light scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(0 0 0 / 0.18) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgb(0 0 0 / 0.16);
+  border-radius: 8px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgb(0 0 0 / 0.26);
+}

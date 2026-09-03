@@ -1,0 +1,34 @@
+{
+  "name": "hyperion",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "generate-data": "node scripts/generate-demo-dataset.cjs"
+  },
+  "dependencies": {
+    "@amcharts/amcharts5": "^5.20.5",
+    "@astryxdesign/cli": "^0.5.2",
+    "@astryxdesign/core": "^0.5.2",
+    "@astryxdesign/theme-neutral": "^0.5.2",
+    "@duckdb/duckdb-wasm": "^1.29.0",
+    "@heroicons/react": "^2.2.0",
+    "@stylexjs/stylex": "^0.19.0",
+    "@tanstack/react-table": "^8.20.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.2.0",
+    "recharts": "^2.15.1",
+    "webmcp": "^0.0.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.1",
+    "tailwindcss": "^3.4.17",
+    "vite": "^6.2.0"
+  }
+}
